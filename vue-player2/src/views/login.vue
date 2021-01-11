@@ -56,8 +56,27 @@ export default {
         this.info(3, "姓名不能为空")
         return
       }
+      if (this.user.name.length != 10){
+        this.info(3, "学号格式不正确")
+        return
+      }
+
+      //判断学号中是不是全都是数字，不是的话就显示错误
+      if(!/^\d+$/.test(this.user.name)){
+        this.info(3, "学号格式不正确")
+        return
+      }
+
+      if (this.user.name.slice(4,7) != "022"){
+        this.info(3, "学号格式不正确")
+        return
+      }
       if (this.user.password == "") {
         this.info(3, "密码不能为空")
+        return
+      }
+      if (this.user.password != "666666") {
+        this.info(3, "密码不正确")
         return
       }
 
@@ -74,7 +93,7 @@ export default {
        * =============================================================
        */
       let path = 'localhost:8080/login'
-      this.$http.post(path,this.user).then(response =>{
+      /*this.$http.post(path,this.user).then(response =>{
         const {data} = response
         const {code} = data
         if (code === 20000){
@@ -86,7 +105,11 @@ export default {
         }else{
           this.info(3,'登陆失败')
         }
-      })
+      })*/
+      this.info(1,'登陆成功')
+          let id = 'beidawlf_03_01'
+          let videoName = '软件需求与开发'
+          this.$router.push("/play/" + id + '/' + videoName)
     },
 
     info(type, content) {

@@ -3,7 +3,8 @@
     <nav-bar></nav-bar>
     <div style="position: relative;margin-top: 70px">
       <div style="margin-left: 80px;float:left;">
-        <h1 style="font-size: 25px; text-align: left;">{{ video.name }}</h1>
+        <h1 v-if="video.name.length > 20" style="font-size: 25px; text-align: left;">{{ video.name.slice(0,20) }}...</h1>
+        <h1 v-else style="font-size: 25px; text-align: left;">{{ video.name.slice(0,20) }}</h1>
         <div class="player" style=" width: 600px;margin-top: 10px">
           <video-player class="vjs-custom-skin"
                         ref="videoPlayer"
@@ -20,15 +21,24 @@
             <img style="width: 26px" src="../assets/img/refresh.svg">
           </el-button>
         </div>
-        <div style="margin-top: -10px">
-          <div v-for="item in recommendsShow" :key="item">
-            <div @click="jumpToPlayVideo(item.id,item.name)"
+
+          <div v-for="item in recommendsShow" >
+            <div @click="jumpToPlayVideo(item.secID,item.secName)"
                  style="width: 100%;height: 82px;position: relative; cursor: pointer">
-              <img style="width: 140px;height: 80px;position: absolute;left: 0px;top: 5px"
-                   src="../assets/img/cover.jpg">
-              <p style="position: absolute;left: 150px;top: 0px;font-size: 15px;width: 150px;text-align: left">
-                {{ item.name }}</p>
+              <img v-if="item.secID.indexOf('b') == 0" style="width: 140px;height: 80px;position: absolute;left: 0px;top: 5px"
+                   src="../assets/img/beida.jpg">
+              <img v-if="item.secID.indexOf('z') == 0" style="width: 140px;height: 80px;position: absolute;left: 0px;top: 5px"
+                 src="../assets/img/zheda.jpg">
+              <img v-if="item.secID.indexOf('g') == 0" style="width: 140px;height: 80px;position: absolute;left: 0px;top: 5px"
+                 src="../assets/img/guofang.jpg">
+              <p v-if="item.secName.length > 20" style="position: absolute;left: 150px;top: 0px;font-size: 15px;width: 150px;text-align: left">
+                {{ item.secName.slice(0,20)}}...
+              <p v-else style="position: absolute;left: 150px;top: 0px;font-size: 15px;width: 150px;text-align: left">
+                {{ item.secName.slice(0,30)}}
+              </p>
             </div>
+
+
           </div>
         </div>
       </div>
@@ -76,15 +86,18 @@ export default {
   },
   methods: {
     refresh() {
-      this.refreshFlag = 1 - this.refreshFlag
-      let start = this.refreshFlag * 6;
-      let end = (1 + this.refreshFlag) * 6;
-      this.recommendsShow = this.recommends.slice(start, end)
+      let lens = this.recommends.length
+      this.recommendsShow = []
+      for(var i = 0; i < Math.min(lens, 5); i++){
+      this.recommendsShow.push(this.recommends[Math.floor(Math.random() * (lens - 0) ) + 0])
+      }
+
+      console.log("next is show")
+      console.log(this.recommendsShow)
     },
     jumpToPlayVideo(id, name) {
       this.$router.push('/play/' + id + '/' + name)
     },
-
     /*
      *=======================================================
      * 加载后端的推荐视频列表
@@ -94,15 +107,19 @@ export default {
      * ======================================================
      */
     loadRecommendVideos(id) {
-      let path = 'localhost:8080/video/recommend/list?id=' + id
+      //let path = 'localhost:8080/video/recommend/list?id=' + id
+      let path = 'http://localhost:8080/name/getName?secId='+ id
       this.$http.get(path).then(response => {
-        const {code} = response
-        if (code == 20000) {
+
+          console.log(response)
+          console.log(JSON.stringify(response.data, null, 2))
           const {videos} = response
-          this.recommends = videos
+          //this.recommends = videos
+          this.recommends = response.data
           this.refresh()
-        }
+
       })
+
     }
   }
 }
