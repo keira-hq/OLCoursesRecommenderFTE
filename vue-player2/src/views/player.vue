@@ -108,7 +108,8 @@ export default {
      */
     loadRecommendVideos(id) {
       //let path = 'localhost:8080/video/recommend/list?id=' + id
-      let path = 'http://localhost:8080/name/getName?secId='+ id
+      //let path = 'http://localhost:8080/name/getName?secId='+ id
+      let path = 'http://39.97.234.82:8080/name/getName?secId='+ id
       this.$http.get(path).then(response => {
 
           console.log(response)

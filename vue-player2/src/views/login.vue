@@ -92,7 +92,9 @@ export default {
        * }
        * =============================================================
        */
-      let path = 'localhost:8080/login'
+      //let path = 'localhost:8080/login'
+
+      let path = '39.97.234.82:8080/login'
       /*this.$http.post(path,this.user).then(response =>{
         const {data} = response
         const {code} = data
